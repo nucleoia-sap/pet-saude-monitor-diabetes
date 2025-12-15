@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Controle Diabético - Busca Ativa</title>
+
+    <link rel="stylesheet" href="./styles/buscaAtiva.css">
+</head>
+
+<body class="h-screen w-full overflow-hidden flex text-gray-800">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-[#4f46e5] flex flex-col items-center py-6 text-white shadow-xl z-20 flex-shrink-0">
+        <div class="mb-8 w-full px-6 flex justify-center">
+            <img src="./assets/logo/RIOPREFEITURA Saúde horizontal monocromática branco.png" alt="Brasão Rio"
+                class="w-16 h-auto drop-shadow-lg">
+        </div>
+        <nav class="w-full flex-1 space-y-2 pl-4">
+            <!-- Link para voltar ao Dashboard -->
+            <a href="index.html" class="sidebar-item text-blue-200 hover:text-white hover:bg-white/10 rounded-l-full">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i><span class="text-sm">Visão Geral</span>
+            </a>
+
+            <!-- Item Ativo: Busca Ativa -->
+            <a href="./buscaAtiva.html" class="sidebar-item sidebar-active">
+                <i data-lucide="users" class="w-5 h-5 mr-3"></i><span class="text-sm">Busca Ativa</span>
+            </a>
+
+            <a href="./riscoClinico.html"
+                class="sidebar-item text-blue-200 hover:text-white hover:bg-white/10 rounded-l-full">
+                <i data-lucide="activity" class="w-5 h-5 mr-3"></i><span class="text-sm">Risco Clínico</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4 text-xs text-center text-blue-200 opacity-80">
+            <!-- <p>Monitor de Diabetes v2.0</p> -->
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden relative bg-[#f3f4f6]">
+
+        <!-- HEADER (Identidade Visual Mantida) -->
+        <header
+            class="px-8 py-4 bg-white border-b border-gray-200 flex justify-between items-start sticky top-0 z-30 shadow-sm">
+            <div class="pt-2">
+                <h1 class="text-2xl md:text-3xl font-bold text-[#1e3a8a] tracking-tight">Dashboard de Controle Diabético
+                </h1>
+                <h2 class="text-lg font-semibold text-gray-600 mt-1">Lista de Busca Ativa</h2>
+                <div class="h-1.5 w-24 bg-red-500 mt-2 rounded-full"></div>
+                <p class="text-xs text-gray-500 mt-1">Pacientes com atraso no acompanhamento</p>
+            </div>
+            <div class="flex items-center gap-6 text-right">
+                <div class="hidden lg:block">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase leading-tight tracking-wide">
+                        Secretaria Municipal de Saúde do Rio de Janeiro (SMS/RJ)<br>Secretaria Municipal de Saude do Rio
+                        de Janeiro (SMS/RJ)<br>Subsecretaria de Promoção, Atenção Primária e Vigilância em Saúde
+                        (SUBPAV)<br>Superintendência de Atenção Primaria (SAP)
+                    </p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div
+                        class="h-10 w-20 bg-[#1e3a8a] text-white flex items-center justify-center font-bold text-xs rounded mb-1 shadow-sm">
+                        NIA</div>
+                    <span class="text-[9px] font-bold text-[#1e3a8a] tracking-wider">NIA/SAP</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Cabecalho APENAS PARA IMPRESSÃO -->
+        <div class="print-header hidden p-8">
+            <h1 class="text-2xl font-bold">Relatório de Busca Ativa - Diabetes</h1>
+            <p id="print-date" class="text-sm text-gray-600"></p>
+        </div>
+
+        <!-- FILTROS E AÇÕES -->
+        <div class="px-8 py-4 bg-white border-b border-gray-100 flex flex-wrap gap-4 items-end shadow-sm z-20 no-print">
+
+            <!-- Upload -->
+            <label
+                class="bg-[#1e3a8a] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-blue-900 transition flex items-center gap-2 shadow-md cursor-pointer h-[38px] mr-auto">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                CARREGAR CSV
+                <input type="file" id="csv-upload" accept=".csv">
+            </label>
+
+            <!-- Filtros -->
+            <div class="flex flex-col gap-1 w-full sm:w-auto min-w-[150px]">
+                <label class="text-xs font-bold text-gray-700 uppercase">Status de Atraso</label>
+                <select id="filter-delay"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                    <option value="120">Atraso (> 4 meses)</option>
+                    <option value="180">Atraso (> 6 meses)</option>
+                    <option value="365">Atraso (> 1 ano)</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1 w-full sm:w-auto min-w-[200px]">
+                <label class="text-xs font-bold text-gray-700 uppercase">Equipe (ESF)</label>
+                <select id="filter-esf"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                    <option value="all">Todas as Equipes</option>
+                </select>
+            </div>
+
+            <button onclick="window.print()"
+                class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded text-sm font-semibold hover:bg-gray-50 transition flex items-center gap-2 h-[38px]">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                IMPRIMIR LISTA
+            </button>
+        </div>
+
+        <!-- CONTEÚDO DA LISTA -->
+        <div class="p-8 pb-24">
+
+            <!-- Cards de Resumo -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm">
+                    <p class="text-xs font-bold text-red-800 uppercase">Pacientes na Lista</p>
+                    <p class="text-2xl font-bold text-red-600" id="count-list">0</p>
+                    <p class="text-[10px] text-red-400 mt-1">Necessitam visita domiciliar</p>
+                </div>
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded shadow-sm">
+                    <p class="text-xs font-bold text-yellow-800 uppercase">Risco Médio (4-6 meses)</p>
+                    <p class="text-2xl font-bold text-yellow-600" id="count-warning">0</p>
+                </div>
+                <div class="bg-gray-50 border-l-4 border-gray-500 p-4 rounded shadow-sm">
+                    <p class="text-xs font-bold text-gray-800 uppercase">Abandono (> 1 ano)</p>
+                    <p class="text-2xl font-bold text-gray-600" id="count-critical">0</p>
+                </div>
+            </div>
+
+            <!-- Tabela -->
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 border-b">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Paciente (ID)</th>
+                                <th scope="col" class="px-6 py-3">Equipe / Clínica</th>
+                                <th scope="col" class="px-6 py-3 text-center">Dias sem Consulta</th>
+                                <th scope="col" class="px-6 py-3">Fatores de Risco</th>
+                                <th scope="col" class="px-6 py-3 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Linhas serão inseridas via JS -->
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-400">
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <i data-lucide="file-search" class="w-8 h-8 opacity-50"></i>
+                                        <p>Nenhum dado carregado. Importe o CSV para gerar a lista.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonte Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="./scripts/buscaAtiva.js"></script>
+</body>
+
+</html>

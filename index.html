@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Controle Diabético - Visão Geral</title>
+
+    <link rel="stylesheet" href="./styles/visaoGeral.css">
+</head>
+
+<body class="h-screen w-full overflow-hidden flex text-gray-800">
+
+    <!-- SIDEBAR -->
+    <aside
+        class="w-64 bg-[#4f46e5] flex flex-col items-center py-6 text-white shadow-xl z-20 flex-shrink-0 transition-all duration-300">
+        <div class="mb-8 w-full px-6 flex justify-center">
+            <img src="./assets/logo/RIOPREFEITURA Saúde horizontal monocromática branco.png" alt="Brasão Rio"
+                class="w-16 h-auto drop-shadow-lg">
+        </div>
+        <nav class="w-full flex-1 space-y-2 pl-4">
+            <a href="./index.html" class="sidebar-active flex items-center px-6 py-4 cursor-pointer">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i><span class="text-sm">Visão Geral</span>
+            </a>
+            <a href="./buscaAtiva.html" class="flex items-center px-6 py-4 cursor-pointer text-blue-200 hover:text-white hover:bg-white/10
+                rounded-l-full transition-colors">
+                <i data-lucide="users" class="w-5 h-5 mr-3"></i><span class="text-sm">Busca Ativa</span>
+            </a>
+            <a href="./riscoClinico.html"
+                class="flex items-center px-6 py-4 cursor-pointer text-blue-200 hover:text-white hover:bg-white/10 rounded-l-full transition-colors">
+                <i data-lucide="activity" class="w-5 h-5 mr-3"></i><span class="text-sm">Risco Clínico</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4 text-xs text-center text-blue-200 opacity-80">
+            <p class="mb-1">Fonte de Dados:</p>
+            <p class="font-bold text-white" id="filename-display">Dados de Amostra</p>
+            <!-- <p class="mt-2">Versão 2.0 (Inteligente)</p> -->
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden relative">
+
+        <!-- HEADER -->
+        <header
+            class="px-8 py-4 bg-white border-b border-gray-200 flex justify-between items-start sticky top-0 z-30 shadow-sm">
+            <div class="pt-2">
+                <h1 class="text-2xl md:text-3xl font-bold text-[#1e3a8a] tracking-tight">Dashboard de Controle Diabético
+                </h1>
+                <div class="h-1.5 w-24 bg-[#ec4899] mt-2 rounded-full"></div>
+            </div>
+            <div class="flex items-center gap-6 text-right">
+                <div class="hidden lg:block">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase leading-tight tracking-wide">
+                        Secretaria Municipal de Saúde do Rio de Janeiro (SMS/RJ)<br>Secretaria Municipal de Saude do Rio
+                        de Janeiro (SMS/RJ)<br>Subsecretaria de Promoção, Atenção Primária e Vigilância em Saúde
+                        (SUBPAV)<br>Superintendência de Atenção Primaria (SAP)
+                    </p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div
+                        class="h-10 w-20 bg-[#1e3a8a] text-white flex items-center justify-center font-bold text-xs rounded mb-1 shadow-sm">
+                        NIA</div>
+                    <span class="text-[9px] font-bold text-[#1e3a8a] tracking-wider">NIA/SAP</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- FILTROS -->
+        <div class="px-8 py-4 bg-white border-b border-gray-100 flex flex-wrap gap-4 items-end shadow-sm z-20">
+            <div class="flex flex-col gap-1 flex-1 min-w-[140px]">
+                <label class="text-xs font-bold text-gray-700 uppercase">Clínica da Família</label>
+                <select id="filter-clinica"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm w-full">
+                    <option value="all">Todas as Unidades</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1 flex-1 min-w-[140px]">
+                <label class="text-xs font-bold text-gray-700 uppercase">Equipe (ESF)</label>
+                <select id="filter-esf"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm w-full">
+                    <option value="all">Todas as Equipes</option>
+                </select>
+            </div>
+
+            <!-- Botão de Upload -->
+            <label
+                class="bg-[#1e3a8a] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-blue-900 transition flex items-center gap-2 shadow-md cursor-pointer h-[38px]">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                CARREGAR CSV
+                <input type="file" id="csv-upload" accept=".csv">
+            </label>
+        </div>
+
+        <!-- DASHBOARD GRID -->
+        <div class="p-8 grid grid-cols-12 gap-6 pb-24">
+
+            <!-- KPIs -->
+            <div class="col-span-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Total -->
+                <div class="bg-[#ec4899] text-white p-5 rounded-xl shadow-lg transform hover:scale-[1.02] transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold uppercase opacity-80 mb-1">Total Pacientes</p>
+                            <p class="text-4xl font-extrabold" id="kpi-total">0</p>
+                        </div>
+                        <i data-lucide="users" class="w-8 h-8 opacity-50"></i>
+                    </div>
+                </div>
+
+                <!-- DM -->
+                <div class="bg-white border-l-4 border-blue-600 p-5 rounded-r-xl shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-blue-900 uppercase opacity-70 mb-1">Diabéticos (DM)</p>
+                            <p class="text-3xl font-bold text-blue-900" id="kpi-dm">0</p>
+                        </div>
+                        <i data-lucide="activity" class="w-8 h-8 text-blue-200"></i>
+                    </div>
+                </div>
+
+                <!-- Pre-DM -->
+                <div class="bg-white border-l-4 border-yellow-500 p-5 rounded-r-xl shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-yellow-700 uppercase opacity-70 mb-1">Pré-Diabéticos</p>
+                            <p class="text-3xl font-bold text-yellow-700" id="kpi-predm">0</p>
+                        </div>
+                        <i data-lucide="alert-circle" class="w-8 h-8 text-yellow-200"></i>
+                    </div>
+                </div>
+
+                <!-- Alerta Busca Ativa -->
+                <div class="bg-red-50 border border-red-100 p-5 rounded-xl shadow-md flex items-center gap-4">
+                    <div class="p-3 bg-red-100 rounded-full text-red-600">
+                        <i data-lucide="calendar-off" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-red-800 font-bold text-xs uppercase">Sem Consulta > 6 meses</p>
+                        <p class="text-2xl font-extrabold text-red-600" id="kpi-atrasados">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LINHA 2: Gráficos Principais -->
+
+            <!-- Tempo sem Consulta (Novo Insight) -->
+            <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h3 class="text-[#1e3a8a] font-bold mb-4 text-sm uppercase tracking-wide flex items-center gap-2">
+                    <i data-lucide="clock" class="w-4 h-4"></i> Tempo desde a Última Consulta (Médica ou Enf.)
+                </h3>
+                <div class="relative w-full h-64">
+                    <canvas id="recencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Fatores de Risco -->
+            <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                <!-- Card Risco -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex-1">
+                    <h3 class="text-[#be185d] font-bold mb-4 text-sm uppercase tracking-wide">Fatores de Risco</h3>
+
+                    <div class="space-y-6">
+                        <!-- Obesidade -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-600">Obesidade</span>
+                                <span class="text-sm font-bold text-[#be185d]" id="val-obesidade">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div id="bar-obesidade" class="bg-[#be185d] h-2.5 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tabagismo -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-600">Tabagismo</span>
+                                <span class="text-sm font-bold text-gray-600" id="val-tabagismo">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div id="bar-tabagismo" class="bg-gray-600 h-2.5 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Raça/Cor (Novo Insight) -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 h-64">
+                    <h3 class="text-[#1e3a8a] font-bold mb-2 text-sm uppercase tracking-wide">Distribuição por Raça/Cor
+                    </h3>
+                    <div class="relative w-full h-40">
+                        <canvas id="raceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonte Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="./scripts/visaoGeral.js"></script>
+
+    </script>
+</body>
+
+</html>
